@@ -1,0 +1,23 @@
+{
+  "name": "cse340-c-repo",
+  "version": "1.0.0",
+  "description": "Backend course repo",
+  "homepage": "https://github.com/Maritherecua/cse340-c-repo#readme",
+  "bugs": {
+    "url": "https://github.com/Maritherecua/cse340-c-repo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Maritherecua/cse340-c-repo.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
