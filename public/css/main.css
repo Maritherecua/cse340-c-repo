@@ -49,7 +49,7 @@ nav ul {
 nav a {
     text-decoration: none;
     /* Remove underline from links */
-    color: #4a5568;
+    color: #1a1e25;
     /* Set link color to match the navbar text color */
     transition: color 0.2s ease;
     /* Smooth transition for hover effect */
@@ -143,6 +143,7 @@ footer p {
     /* Remove default margin from paragraphs within the footer */
     font-size: 0.9rem;
     /* Set a smaller font size for footer text */
-    color: #1f252d;
-    /* Set the color of the footer text to a medium gray */
+    color: #1a1e25;
+    /* Set the color of the footer text to a dark gray */
+    justify-content: center; 
 }
