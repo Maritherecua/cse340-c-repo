@@ -145,5 +145,5 @@ footer p {
     /* Set a smaller font size for footer text */
     color: #1a1e25;
     /* Set the color of the footer text to a dark gray */
-    margin: 0 auto;
+    margin: 0 auto; /* Center the footer paragraphs within the footer */
 }
