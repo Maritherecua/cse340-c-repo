@@ -1,6 +1,23 @@
 import { Pool } from 'pg';
 
 const connectionString = process.env.DB_URL || process.env.DATABASE_URL;
+const nodeEnv = process.env.NODE_ENV?.toLowerCase() || 'development';
+const dbSsl = process.env.DB_SSL?.toLowerCase();
+
+const resolveSslConfig = () => {
+    if (dbSsl === 'disable' || dbSsl === 'false' || dbSsl === 'off') {
+        return false;
+    }
+
+    if (dbSsl === 'require' || dbSsl === 'true' || dbSsl === 'on') {
+        return { rejectUnauthorized: false };
+    }
+
+    const isRenderHost = /render\.com/i.test(connectionString || '');
+    const shouldUseSsl = nodeEnv === 'production' || isRenderHost;
+
+    return shouldUseSsl ? { rejectUnauthorized: false } : false;
+};
 
 /**
  * Connection pool for PostgreSQL database.
@@ -15,7 +32,7 @@ const connectionString = process.env.DB_URL || process.env.DATABASE_URL;
  */
 const pool = new Pool({
     connectionString,
-    ssl: true
+    ssl: resolveSslConfig()
 });
 
 /**
