@@ -16,19 +16,22 @@ VALUES
 ON CONFLICT (name) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS project (
-project_id INT NOT NULL AUTO_INCREMENT,
+project_id SERIAL PRIMARY KEY,
 title VARCHAR(255) NOT NULL,
 description TEXT NOT NULL,
 organization_id INTEGER NOT NULL,
 location VARCHAR(150) NOT NULL,
 date DATE NOT NULL,
-PRIMARY KEY (project_id),
 --Foreign key constraint to link projects to their respective organization table.
 FOREIGN KEY (organization_id) 
 REFERENCES organization(organization_id) 
 ON DELETE CASCADE
 );
-INSERT INTO project ( project_id, organization_id, title, description,location, date)
+
+CREATE UNIQUE INDEX IF NOT EXISTS project_unique_org_title_date
+ON project (organization_id, title, date);
+
+INSERT INTO project (organization_id, title, description, location, date)
 VALUES
 -- BrightFuture Builders (ID 1)
 
@@ -64,12 +67,12 @@ VALUES
 
 (3, 'Neighborhood Clean-up', 'Picking up litter', 'Downtown Area', '2026-10-12'),
 
-(3, 'Charity Gala Support', 'Managing logistics', 'Grand Hotel', '2026-12-05');
+(3, 'Charity Gala Support', 'Managing logistics', 'Grand Hotel', '2026-12-05')
+ON CONFLICT (organization_id, title, date) DO NOTHING;
  
- CREATE TABLE IF NOT EXISTS Category (
+CREATE TABLE IF NOT EXISTS category (
 category_id SERIAL PRIMARY KEY,
-name VARCHAR(100) NOT NULL UNIQUE,
-CONSTRAINT categories_pk PRIMARY KEY (category_id)
+name VARCHAR(100) NOT NULL UNIQUE
 );
 -- Create a junction table to link projects and categories (many-to-many relationship)
 CREATE TABLE IF NOT EXISTS project_category (
@@ -77,14 +80,16 @@ project_id INT NOT NULL,
 category_id INT NOT NULL,
 CONSTRAINT project_categories_pk PRIMARY KEY (project_id, category_id),
 CONSTRAINT fk_project FOREIGN KEY (project_id) REFERENCES project(project_id) ON DELETE CASCADE,
-CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES Category(category_id) ON DELETE CASCADE
+CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE CASCADE
 );
-INSERT INTO Category (name) VALUES
+INSERT INTO category (name) VALUES
 
 ('Education & Tutoring'),
 ('Food & Hunger Relief'),
 ('Environmental & Clean-up'),
-('Community Service');
+('Community Service')
+ON CONFLICT (name) DO NOTHING;
+
 INSERT INTO project_category (project_id, category_id) VALUES
 (1, 4), -- Community Center Renovation - Community Service
 (2, 1), -- Housing Assistance - Education & Tutoring
@@ -100,7 +105,8 @@ INSERT INTO project_category (project_id, category_id) VALUES
 (12, 1), -- Elderly Tech Support - Education & Tutoring
 (13, 1), -- After-School Tutoring - Education & Tutoring
 (14, 3), -- Neighborhood Clean-up - Environmental & Clean-up
-(15, 4); -- Charity Gala Support - Community Service
+(15, 4) -- Charity Gala Support - Community Service
+ON CONFLICT (project_id, category_id) DO NOTHING;
 
 
  
