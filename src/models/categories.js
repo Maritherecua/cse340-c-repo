@@ -1,5 +1,5 @@
 
-import db from '../db/index.js';
+import db from './db.js';
 
 const getAllCategories = async () => {
     const query = `
