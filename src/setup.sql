@@ -66,6 +66,41 @@ VALUES
 
 (3, 'Charity Gala Support', 'Managing logistics', 'Grand Hotel', '2026-12-05');
  
+ CREATE TABLE IF NOT EXISTS Category (
+category_id SERIAL PRIMARY KEY,
+name VARCHAR(100) NOT NULL UNIQUE,
+CONSTRAINT categories_pk PRIMARY KEY (category_id)
+);
+-- Create a junction table to link projects and categories (many-to-many relationship)
+CREATE TABLE IF NOT EXISTS project_category (
+project_id INT NOT NULL,
+category_id INT NOT NULL,
+CONSTRAINT project_categories_pk PRIMARY KEY (project_id, category_id),
+CONSTRAINT fk_project FOREIGN KEY (project_id) REFERENCES project(project_id) ON DELETE CASCADE,
+CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES Category(category_id) ON DELETE CASCADE
+);
+INSERT INTO Category (name) VALUES
+
+('Education & Tutoring'),
+('Food & Hunger Relief'),
+('Environmental & Clean-up'),
+('Community Service');
+INSERT INTO project_category (project_id, category_id) VALUES
+(1, 4), -- Community Center Renovation - Community Service
+(2, 1), -- Housing Assistance - Education & Tutoring
+(3, 1), -- School Playground Build - Education & Tutoring
+(4, 4), -- Library Expansion - Community Service
+(5, 3), -- Park Bench Installation - Environmental & Clean-up
+(6, 1), -- Urban Garden Plot - Education & Tutoring
+(7, 3), -- Tree Planting Initiative - Environmental & Clean-up
+(8, 1), -- Compost Education - Education & Tutoring
+(9, 4), -- Greenhouse Repair - Community Service
+(10, 1), -- Seed Exchange Fair - Education & Tutoring
+(11, 2), -- Weekly Soup Kitchen - Food & Hunger Relief
+(12, 1), -- Elderly Tech Support - Education & Tutoring
+(13, 1), -- After-School Tutoring - Education & Tutoring
+(14, 3), -- Neighborhood Clean-up - Environmental & Clean-up
+(15, 4); -- Charity Gala Support - Community Service
 
 
  
