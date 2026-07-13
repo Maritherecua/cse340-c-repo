@@ -75,7 +75,7 @@ main {
 }
 
 h1 {
-    font-size: 1.2rem;
+    font-size: 1.05rem;
     /* Set a large font size for the main heading */
     margin-bottom: 0.5rem;
     /* Add some space below the main heading */
@@ -88,7 +88,7 @@ h1 {
 }
 
 h2 {
-    font-size: 2.25rem;
+    font-size: 1.5rem;
     /* Set a slightly smaller font size for secondary headings */
     margin-bottom: 1.5rem;
     /* Add some space below the secondary heading */
@@ -121,7 +121,7 @@ p {
     /* Ensure the main logo is displayed as a block element */
     border-radius: 8px;
     /* Add rounded corners to the main logo image */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     /* Add a subtle shadow to the main logo image */
 
 }
