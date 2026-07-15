@@ -1,4 +1,4 @@
-<%- include('partials/header') %>
+<!--<%- include('partials/header') %>
     <main>
         <h1>
             <%= title %>
@@ -16,4 +16,37 @@
                     <% }) %>
         </ul>
     </main>
-    <%- include('partials/footer') %>
+    <%- include('partials/footer') %>-->
+
+    <!-- filepath: /Users/mariatarroyo/Documents/cse340-c-repo/src/views/projects.ejs -->
+<%- include('partials/header') %>
+<main>
+  <h1><%= title %></h1>
+
+  <% if (!projects || projects.length === 0) { %>
+    <p>No upcoming service projects found.</p>
+  <% } else { %>
+    <ul class="project-list">
+      <% projects.forEach(project => { %>
+        <% const formattedDate = new Date(project.date).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        }); %>
+        <li class="project-tile">
+          <a href="/project/<%= project.project.id %>" class="project-link">
+            <strong><%= project.title %></strong>
+            <span> — <%= formattedDate %></span>
+          </a>
+          <div>
+            Organization:
+            <a href="/organization/<%= project.organization_id %>">
+              <%= project.organization_name %>
+              </a>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</main>
+<%- include('partials/footer') %>

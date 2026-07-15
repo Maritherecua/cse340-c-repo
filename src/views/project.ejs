@@ -1,0 +1,27 @@
+!-- file to display the service project details page, shows the details of a single service project-->
+<%- include('partials/header') %>
+<main class="project-details">
+    <% if (!project) { %>
+        <h1>Project Not Found</h1>
+        <p>Project details not available.</p>
+    <% } else { %>
+  <h1><%= project.title %></h1>
+
+  <p><strong>Description:</strong> <%= project.description %></p>
+
+  <p>
+    <strong>Date:</strong>
+    <%= project.date ? new Date(project.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "Date not available" %>
+  </p>
+
+  <p><strong>Location:</strong> <%= project.location %></p>
+
+  <p>
+    <strong>Partner Organization:</strong>
+    <a href="/organization/<%= project.organization_id %>">
+      <%= project.organization_name %>
+      </a>
+  </p>
+    <% } %>
+</main>
+<%- include('partials/footer') %>
