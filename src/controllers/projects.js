@@ -19,16 +19,18 @@ const showProjectsPage = async (req, res) => {
 //Create a new controller function to handle the request for a specific project details page. This function will accept a project ID as a parameter, call the getProjectDetails function from the model to retrieve the details of that project from the database, and then render the 'project-details' view, passing the project details as data.
 const showProjectDetailsPage = async (req, res) => {
     try {
-        const projectId = req.params.id; // Get the project ID from the request parameters
-        const project = await getProjectDetails(projectId); // Call the model function to get project details
-        if (project) {
-            res.render('project-details', { title: project.title, project }); // Render the view with project details
-        } else {
-            res.status(404).send('Project not found'); // Handle case where project is not found
+        const Id = req.params.id; // Extracts the ID from the URL
+        const project = await getProjectDetails(Id); // Call the model function to get project details
+        if (!project) {
+            return res.status(404).render('project', { title: 'Project Not Found, project: null' }); // Handle case where project is not found
         }
-    } catch (error) {
-        console.error('Error fetching project details:', error);
-        res.status(500).send('An error occurred while fetching project details.');
+        //Render the view project.ejs with the project details. Pass the project title as the title for the view, and the project details as data to be displayed in the view. 
+            res.render('project', { title: project.title, project }); // Render the view with project details
+        } 
+        
+     catch (error) {
+        console.error('Error in showProjectDetailsPage:', error);
+        res.status(500).send('An error occurred.');
     }
 };
 // Define the controller function to handle the request for the projects page
