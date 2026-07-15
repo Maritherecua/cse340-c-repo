@@ -11,7 +11,7 @@ import { showProjectDetailsPage } from './controllers/projects.js';
 const router = express.Router();
 
 router.get('/', showHomePage);
-router.get('/organization', showOrganizationsPage);
+router.get('/organizations', showOrganizationsPage);
 router.get('/projects', showProjectsPage);
 router.get('/categories', showCategoriesPage);
 router.get('/organization/:id', showOrganizationDetailsPage);
