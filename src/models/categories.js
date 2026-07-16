@@ -55,11 +55,11 @@ const getCategoriesByProjectId = async (projectId) => {
 const getProjectsByCategoryId = async (categoryId) => {
     try {
         const query = `
-            SELECT sp.* 
-            FROM public.service_project sp
-            JOIN public.project_category pc ON sp.project_id = pc.project_id
+            SELECT p.* 
+            FROM public.project p
+            JOIN public.project_category pc ON p.project_id = pc.project_id
             WHERE pc.category_id = $1
-            ORDER BY sp.name;
+            ORDER BY p.title;
         `;
         const result = await db.query(query, [categoryId]);
         return result.rows;

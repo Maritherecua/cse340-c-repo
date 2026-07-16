@@ -7,6 +7,7 @@ import { showCategoriesPage } from './controllers/categories.js';
 import { testErrorPage } from './controllers/errors.js';
 import { showOrganizationDetailsPage } from './controllers/organizations.js';
 import { showProjectDetailsPage } from './controllers/projects.js';
+import { showCategoryDetailsPage } from './controllers/categories.js';
 
 const router = express.Router();
 
