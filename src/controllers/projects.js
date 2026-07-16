@@ -1,6 +1,7 @@
 //Import the necessary modules and functions
 //import { getAllProjects } from '../models/projects.js';
 import { getProjectsByOrganizationId, getUpcomingProjects, getProjectDetails } from '../models/projects.js';
+import { getCategoriesByProjectId } from '../models/categories.js';
 //Create the constant for the controller function to handle the request for the projects page. This function will call the getAllProjects function from the model to retrieve all projects from the database, and then render the 'projects' view, passing the title and the list of projects as data.
 const NUMBER_OF_UPCOMING_PROJECTS = 5;
 //Update the controller function TO USE THE getUpcomingProjects MODEL FUNCTION INSTEAD OF getAllProjects. THIS WILL RETRIEVE ONLY THE UPCOMING PROJECTS TO DISPLAY ON THE PROJECTS PAGE.
@@ -20,25 +21,22 @@ const showProjectsPage = async (req, res) => {
 const showProjectDetailsPage = async (req, res) => {
     try {
         const Id = req.params.id; // Extracts the ID from the URL
+        //Call the model function to get project details
         const project = await getProjectDetails(Id); // Call the model function to get project details
         if (!project) {
-            return res.status(404).render('project', { title: 'Project Not Found, project: null' }); // Handle case where project is not found
+            return res.status(404).render('project', { title: 'Project Not Found', project: null, categories: [] }); // Handle case where project is not found
         }
+        // 2. Retrieve the categories for this project using your new model function
+        const categories = await getCategoriesByProjectId(Id);
         //Render the view project.ejs with the project details. Pass the project title as the title for the view, and the project details as data to be displayed in the view. 
-            res.render('project', { title: project.title, project }); // Render the view with project details
-        } 
+            res.render('project', { title: project.title, project, categories }); // Render the view with project details and categories
+        }
         
      catch (error) {
         console.error('Error in showProjectDetailsPage:', error);
         res.status(500).send('An error occurred.');
     }
 };
-// Define the controller function to handle the request for the projects page
-//const showProjectsPage = async (req, res) => {
-  //const projects = await getAllProjects();
-  //const title = 'Service Projects';
 
-  //res.render('projects', { title, projects });
-//};
 // Export the controller function for use in the routes
 export { showProjectsPage, showProjectDetailsPage };

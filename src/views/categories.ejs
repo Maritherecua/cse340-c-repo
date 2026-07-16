@@ -6,7 +6,10 @@
         <ul>
             <% categories.forEach(category=> { %>
                 <li>
+                    <!-- Wrap the category name in a link pointing to the details page -->
+                    <a href="/category/<%= category.category_id %>">
                     <%= category.name %>
+                    </a>
                 </li>
                 <% }) %>
         </ul>

@@ -7,6 +7,17 @@
     <% } else { %>
   <h1><%= project.title %></h1>
 
+<!-- Add Category Tags Section Here -->
+        <% if (categories && categories.length > 0) { %>
+            <div class="project-tags">
+                <strong>Categories:</strong>
+                <% categories.forEach(category => { %>
+                    <a href="/category/<%= category.category_id %>" class="tag">
+                        <%= category.name %>
+                    </a>
+                <% }) %>
+            </div>
+        <% } %>
   <p><strong>Description:</strong> <%= project.description %></p>
 
   <p>
