@@ -50,6 +50,16 @@ const showNewOrganizationForm = async (req, res) => {
     res.render('new-organization', { title });
 };
 const processNewOrganizationForm = async (req, res) => {
+    // Check for validation errors
+    const results = validationResult(req);
+    if (!results.isEmpty()) {
+        // Validation failed - loop through errors
+        results.array().forEach(error => {
+            req.flash('error', error.msg);
+        });
+        // Redirect back to the new organization form
+        return res.redirect('/new-organization');
+        }
     const { name, description, contactEmail } = req.body;
     const logoFilename = 'placeholder-logo.png'; // Use the placeholder logo for all new organizations
 
