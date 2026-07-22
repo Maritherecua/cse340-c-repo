@@ -29,25 +29,34 @@ const organizationValidation = [
 ];
 // Controller function to handle the request for the organizations page
 const showOrganizationsPage = async (req, res) => {
-  const organizations = await getAllOrganizations();
-  const title = 'Our Partner Organizations';
+    const organizations = await getAllOrganizations();
+    const title = 'Our Partner Organizations';
 
-  res.render('organizations', { title, organizations });
+    res.render('organizations', { title, organizations });
 };
 // Controller function for the organization details page
 const showOrganizationDetailsPage = async (req, res) => {
-  const organizationId = req.params.id;
-  const organizationDetails = await getOrganizationDetails(organizationId);
-  const projects = await getProjectsByOrganizationId(organizationId);
-  const title = 'Organization Details';
+    const organizationId = req.params.id;
+    const organizationDetails = await getOrganizationDetails(organizationId);
+    const projects = await getProjectsByOrganizationId(organizationId);
+    const title = 'Organization Details';
 
-  res.render('organization', { title: organizationDetails.name, organizationDetails, projects });
+    res.render('organization', { title: organizationDetails.name, organizationDetails, projects });
 };
 const showNewOrganizationForm = async (req, res) => {
     const title = 'Add New Organization';
 
     res.render('new-organization', { title });
 };
+
+const showEditOrganizationForm = async (req, res) => {
+    const organizationId = req.params.id;
+    const organizationDetails = await getOrganizationDetails(organizationId);
+
+    const title = 'Edit Organization';
+    res.render('edit-organization', { title, organizationDetails });
+};
+
 const processNewOrganizationForm = async (req, res) => {
     // Check for validation errors
     const results = validationResult(req);
@@ -58,7 +67,7 @@ const processNewOrganizationForm = async (req, res) => {
         });
         // Redirect back to the new organization form
         return res.redirect('/new-organization');
-        }
+    }
     const { name, description, contactEmail } = req.body;
     const logoFilename = 'placeholder-logo.png'; // Use the placeholder logo for all new organizations
 
@@ -69,5 +78,8 @@ const processNewOrganizationForm = async (req, res) => {
 };
 
 // Export the controller function
-export { showOrganizationsPage, showOrganizationDetailsPage,
-   showNewOrganizationForm, processNewOrganizationForm, organizationValidation };
+export {
+    showOrganizationsPage, showOrganizationDetailsPage,
+    showNewOrganizationForm, showEditOrganizationForm,
+    processNewOrganizationForm, organizationValidation
+};
