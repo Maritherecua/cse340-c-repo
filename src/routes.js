@@ -10,7 +10,7 @@ import { showProjectDetailsPage } from './controllers/projects.js';
 import { showCategoryDetailsPage } from './controllers/categories.js';
 import { showNewOrganizationForm } from './controllers/organizations.js';
 import { processNewOrganizationForm } from './controllers/organizations.js';
-import { organizationValidation } from './xontrollers/organizations.js';
+import { organizationValidation } from './controllers/organizations.js';
 
 const router = express.Router();
 

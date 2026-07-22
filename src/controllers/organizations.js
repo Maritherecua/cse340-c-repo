@@ -27,7 +27,6 @@ const organizationValidation = [
         .isEmail()
         .withMessage('Please provide a valid email address')
 ];
-const handleValidationErrors = (req, res, next) => {
 // Controller function to handle the request for the organizations page
 const showOrganizationsPage = async (req, res) => {
   const organizations = await getAllOrganizations();
