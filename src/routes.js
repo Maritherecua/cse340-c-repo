@@ -30,5 +30,5 @@ router.get('/new-organization', showNewOrganizationForm);
 router.get('/edit-organization/:id', showEditOrganizationForm);
 //Router to handle the form submission for creating a new organization
 router.post('/new-organization', organizationValidation, processNewOrganizationForm);
-router.post('/edit-organization/:id');
+router.post('/edit-organization/:id', organizationValidation, processEditOrganizationForm);
 export default router;
