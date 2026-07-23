@@ -1,6 +1,6 @@
 import db from './db.js'
 
-const getAllProjects = async() => {
+const getAllProjects = async () => {
     const query = `
         SELECT p.project_id, p.organization_id, p.title, p.description, p.location, p.date,
                o.name AS organization_name
@@ -13,7 +13,7 @@ const getAllProjects = async() => {
     return result.rows;
 };
 const getProjectsByOrganizationId = async (organizationId) => {
-      const query = `
+    const query = `
         SELECT project_id, organization_id, title, description,
           location,
           date
@@ -29,7 +29,7 @@ const getProjectsByOrganizationId = async (organizationId) => {
 };
 // This function retrieves a limit number of upcoming projects from the database. At this point the controller will pass 5 as the number of projects to retrieve, but the function can accept any number.
 // This function queries the database for service projects with a date greater than or equal to the current date, ordered by date in ascending order, and limited to number_of_projects results.
-const getUpcomingProjects = async (limit) => {  
+const getUpcomingProjects = async (limit) => {
     const query = `
         SELECT p.project_id, p.title, p.description,
                p.date, p.location, p.organization_id, o.name AS organization_name
@@ -54,15 +54,15 @@ const getProjectDetails = async (id) => {
         JOIN organization o ON p.organization_id = o.organization_id
         WHERE p.project_id = $1;
     `;
-    
+
     const queryParams = [id];
     const result = await db.query(query, queryParams);
     return result.rows[0]; // Returns the first (and only) project found with the given ID.
 };
 //Function to insert new service project into the database. Accepts project details as parameters and inserts a new record into the project table.
-const createProject = async (organizationId, title, description, location, date) => {
+const createProject = async (title, description, location, date, organizationId) => {
     const query = `
-        INSERT INTO project (title, description, location, date, organization_id,)
+        INSERT INTO project (title, description, location, date, organization_id)
         VALUES ($1, $2, $3, $4, $5)
         RETURNING project_id;
     `;
@@ -76,8 +76,10 @@ const createProject = async (organizationId, title, description, location, date)
         console.log('Created new project with ID:', result.rows[0].project_id);
     }
     return result.rows[0].project_id;
-    
+
 }
 // Export the model functions.
-export {getAllProjects, getProjectsByOrganizationId,
-     getUpcomingProjects, getProjectDetails, createProject};
+export {
+    getAllProjects, getProjectsByOrganizationId,
+    getUpcomingProjects, getProjectDetails, createProject
+};

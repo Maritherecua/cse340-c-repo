@@ -9,7 +9,7 @@ const NUMBER_OF_UPCOMING_PROJECTS = 5;
 //Update the controller function TO USE THE getUpcomingProjects MODEL FUNCTION INSTEAD OF getAllProjects. THIS WILL RETRIEVE ONLY THE UPCOMING PROJECTS TO DISPLAY ON THE PROJECTS PAGE.
 const showProjectsPage = async (req, res) => {
     try {
-      // Call the getUpcomingProjects function from the model, passing the constant for the number of upcoming projects to retrieve.
+        // Call the getUpcomingProjects function from the model, passing the constant for the number of upcoming projects to retrieve.
         const projects = await getUpcomingProjects(NUMBER_OF_UPCOMING_PROJECTS);
         //update the title to reflect that these are upcoming service projects.
         const title = 'Upcoming Service Projects';
@@ -31,10 +31,10 @@ const showProjectDetailsPage = async (req, res) => {
         // 2. Retrieve the categories for this project using your new model function
         const categories = await getCategoriesByProjectId(Id);
         //Render the view project.ejs with the project details. Pass the project title as the title for the view, and the project details as data to be displayed in the view. 
-            res.render('project', { title: project.title, project, categories }); // Render the view with project details and categories
-        }
-        
-     catch (error) {
+        res.render('project', { title: project.title, project, categories }); // Render the view with project details and categories
+    }
+
+    catch (error) {
         console.error('Error in showProjectDetailsPage:', error);
         res.status(500).send('An error occurred.');
     }
@@ -55,10 +55,10 @@ const processNewProjectForm = async (req, res) => {
     const { title, description, location, date, organizationId } = req.body;
     try {
         //Create the new project in the database using the createProject model function, passing in the extracted data. This function will return the ID of the newly created project.
-        const newProjectId = await createProject( title, description, location, date, organizationId);
+        const newProjectId = await createProject(title, description, location, date, organizationId);
 
         req.flash('success', 'Project created successfully!');
-        res.redirect(`/projects/${newProjectId}`);
+        res.redirect(`/project/${newProjectId}`);
     } catch (error) {
         console.error('Error creating new project:', error);
         req.flash('error', 'An error occurred while creating the project.');
@@ -67,5 +67,7 @@ const processNewProjectForm = async (req, res) => {
 };
 
 // Export the controller function for use in the routes
-export { showProjectsPage, showProjectDetailsPage, 
-    showNewProjectForm, processNewProjectForm };
+export {
+    showProjectsPage, showProjectDetailsPage,
+    showNewProjectForm, processNewProjectForm
+};
