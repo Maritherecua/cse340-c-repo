@@ -3,6 +3,8 @@ import express from 'express';
 import { showHomePage } from './controllers/index.js';
 import { showOrganizationsPage } from './controllers/organizations.js';
 import { showProjectsPage } from './controllers/projects.js';
+import { showNewProjectForm } from './controllers/projects.js';
+import { processNewProjectForm } from './controllers/projects.js';
 import { showCategoriesPage } from './controllers/categories.js';
 import { testErrorPage } from './controllers/errors.js';
 import { showOrganizationDetailsPage } from './controllers/organizations.js';
@@ -18,6 +20,10 @@ const router = express.Router();
 router.get('/', showHomePage);
 router.get('/organizations', showOrganizationsPage);
 router.get('/projects', showProjectsPage);
+// Routes for new project form and submission
+router.get('/new-project', showNewProjectForm);
+// Route to handle the form submission for creating a new project
+router.post('/new-project', processNewProjectForm);
 router.get('/categories', showCategoriesPage);
 router.get('/organization/:id', showOrganizationDetailsPage);
 router.get('/project/:id', showProjectDetailsPage);

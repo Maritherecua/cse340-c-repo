@@ -2,6 +2,8 @@
 //import { getAllProjects } from '../models/projects.js';
 import { getProjectsByOrganizationId, getUpcomingProjects, getProjectDetails } from '../models/projects.js';
 import { getCategoriesByProjectId } from '../models/categories.js';
+import { createProject } from '../models/projects.js';
+import { getAllOrganizations } from '../models/organizations.js';
 //Create the constant for the controller function to handle the request for the projects page. This function will call the getAllProjects function from the model to retrieve all projects from the database, and then render the 'projects' view, passing the title and the list of projects as data.
 const NUMBER_OF_UPCOMING_PROJECTS = 5;
 //Update the controller function TO USE THE getUpcomingProjects MODEL FUNCTION INSTEAD OF getAllProjects. THIS WILL RETRIEVE ONLY THE UPCOMING PROJECTS TO DISPLAY ON THE PROJECTS PAGE.
@@ -37,6 +39,33 @@ const showProjectDetailsPage = async (req, res) => {
         res.status(500).send('An error occurred.');
     }
 };
+//Function to get a list of all organization from the db, and renders the new-project view, passing in the page title and the list of organizations to populate the dropsown menu.
+const showNewProjectForm = async (req, res) => {
+    try {
+        const organizations = await getAllOrganizations();
+        const title = 'Add New Project';
+        res.render('new-project', { title, organizations });
+    } catch (error) {
+        console.error('Error fetching organizations:', error);
+        res.status(500).send('An error occurred while fetching organizations.');
+    }
+};
+//Function to extract the project data from the form using req.body.
+const processNewProjectForm = async (req, res) => {
+    const { title, description, location, date, organizationId } = req.body;
+    try {
+        //Create the new project in the database using the createProject model function, passing in the extracted data. This function will return the ID of the newly created project.
+        const newProjectId = await createProject( title, description, location, date, organizationId);
+
+        req.flash('success', 'Project created successfully!');
+        res.redirect(`/projects/${newProjectId}`);
+    } catch (error) {
+        console.error('Error creating new project:', error);
+        req.flash('error', 'An error occurred while creating the project.');
+        res.redirect('/new-project');
+    }
+};
 
 // Export the controller function for use in the routes
-export { showProjectsPage, showProjectDetailsPage };
+export { showProjectsPage, showProjectDetailsPage, 
+    showNewProjectForm, processNewProjectForm };
