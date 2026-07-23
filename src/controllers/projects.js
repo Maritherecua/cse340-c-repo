@@ -1,9 +1,31 @@
 //Import the necessary modules and functions
+import { body, validationResult } from 'express-validator';
 //import { getAllProjects } from '../models/projects.js';
 import { getProjectsByOrganizationId, getUpcomingProjects, getProjectDetails } from '../models/projects.js';
 import { getCategoriesByProjectId } from '../models/categories.js';
 import { createProject } from '../models/projects.js';
 import { getAllOrganizations } from '../models/organizations.js';
+// Define your validation rules array
+const projectValidation = [
+    body('title')
+        .trim()
+        .notEmpty().withMessage('Title is required')
+        .isLength({ min: 3, max: 200 }).withMessage('Title must be between 3 and 200 characters'),
+    body('description')
+        .trim()
+        .notEmpty().withMessage('Description is required')
+        .isLength({ max: 1000 }).withMessage('Description must be less than 1000 characters'),
+    body('location')
+        .trim()
+        .notEmpty().withMessage('Location is required')
+        .isLength({ max: 200 }).withMessage('Location must be less than 200 characters'),
+    body('date')
+        .notEmpty().withMessage('Date is required')
+        .isISO8601().withMessage('Date must be a valid date format'),
+    body('organizationId')
+        .notEmpty().withMessage('Organization is required')
+        .isInt().withMessage('Organization must be a valid integer')
+];
 //Create the constant for the controller function to handle the request for the projects page. This function will call the getAllProjects function from the model to retrieve all projects from the database, and then render the 'projects' view, passing the title and the list of projects as data.
 const NUMBER_OF_UPCOMING_PROJECTS = 5;
 //Update the controller function TO USE THE getUpcomingProjects MODEL FUNCTION INSTEAD OF getAllProjects. THIS WILL RETRIEVE ONLY THE UPCOMING PROJECTS TO DISPLAY ON THE PROJECTS PAGE.
@@ -64,10 +86,21 @@ const processNewProjectForm = async (req, res) => {
         req.flash('error', 'An error occurred while creating the project.');
         res.redirect('/new-project');
     }
+// Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        // Loop through validation errors and flash them
+        errors.array().forEach((error) => {
+            req.flash('error', error.msg);
+        });
+
+        // Redirect back to the new project form
+        return res.redirect('/new-project');
+    }    
 };
 
 // Export the controller function for use in the routes
 export {
     showProjectsPage, showProjectDetailsPage,
-    showNewProjectForm, processNewProjectForm
+    showNewProjectForm, processNewProjectForm, projectValidation
 };

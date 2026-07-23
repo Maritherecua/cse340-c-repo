@@ -9,6 +9,7 @@ import { showCategoriesPage } from './controllers/categories.js';
 import { testErrorPage } from './controllers/errors.js';
 import { showOrganizationDetailsPage } from './controllers/organizations.js';
 import { showProjectDetailsPage } from './controllers/projects.js';
+import { projectValidation } from './controllers/projects.js';
 import { showCategoryDetailsPage } from './controllers/categories.js';
 import { showNewOrganizationForm } from './controllers/organizations.js';
 import { showEditOrganizationForm } from './controllers/organizations.js';
@@ -23,7 +24,7 @@ router.get('/projects', showProjectsPage);
 // Routes for new project form and submission
 router.get('/new-project', showNewProjectForm);
 // Route to handle the form submission for creating a new project
-router.post('/new-project', processNewProjectForm);
+router.post('/new-project', projectValidation, processNewProjectForm);
 router.get('/categories', showCategoriesPage);
 router.get('/organization/:id', showOrganizationDetailsPage);
 router.get('/project/:id', showProjectDetailsPage);
