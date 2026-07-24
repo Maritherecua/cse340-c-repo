@@ -14,8 +14,7 @@ const getAllCategories = async () => {
     return result.rows;
 };
 /* ******************************************
- * Retrieve a single category by its ID
- * ****************************************** */
+ * Retrieve a single category by its ID */
 const getCategoryById = async (categoryId) => {
     try {
         const query = `
@@ -60,8 +59,7 @@ const updateCategory = async (categoryId, name) => {
     }
 };
 /* ******************************************
- * Retrieve all categories for a given service project
- * ****************************************** */
+ * Retrieve all categories for a given service project*/
 const getCategoriesByProjectId = async (projectId) => {
     try {
         const query = `
