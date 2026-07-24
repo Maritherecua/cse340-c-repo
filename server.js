@@ -2,7 +2,7 @@ import express from 'express';
 import session from 'express-session';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import flash from './src/middleware/flash.js';    
+import flash from './src/middleware/flash.js';
 import { testConnection } from './src/models/db.js';
 
 import router from './src/routes.js';
@@ -10,7 +10,11 @@ import router from './src/routes.js';
 // Define the application environment
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
 //Load the session secret from environment variables
-const SESSION_SECRET = process.env.SESSION_SECRET; // 'default_secret_key';
+const SESSION_SECRET = process.env.SESSION_SECRET || 'change-me-in-production';
+
+if (!process.env.SESSION_SECRET) {
+    console.warn('SESSION_SECRET is not set. Using a fallback secret; configure SESSION_SECRET in Render environment variables.');
+}
 
 // Define the port number the server will listen on
 const PORT = process.env.PORT || 3000;
@@ -22,7 +26,7 @@ const app = express();
 /**
   * Configure Express middleware
   */
- // Set up session management
+// Set up session management
 app.use(session({
     secret: SESSION_SECRET,
     resave: false,
@@ -30,7 +34,7 @@ app.use(session({
     cookie: { maxAge: 60 * 60 * 1000 } // Session expires after 1 hour of inactivity
 }));
 // use flash message middleware
-app.use(flash); 
+app.use(flash);
 // Allow Express to receive and process common POST data
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -58,7 +62,7 @@ app.use((req, res, next) => {
 /**
   * Routes
   */
- //Use the imported router for handling routes
+//Use the imported router for handling routes
 app.use(router);
 
 // Catch-all route for 404 errors
@@ -72,27 +76,27 @@ app.use((err, req, res, next) => {
     // Log error details for debugging
     console.error('Error occurred:', err.message);
     console.error('Stack trace:', err.stack);
-    
+
     // Determine status and template
     const status = err.status || 500;
     const template = status === 404 ? '404' : '500';
-    
+
     // Prepare data for the template
     const context = {
         title: status === 404 ? 'Page Not Found' : 'Server Error',
         error: err.message,
         stack: err.stack
     };
-    
+
     // Render the appropriate error template
     res.status(status).render(`errors/${template}`, context);
 });
 app.listen(PORT, async () => {
-  try {
-    await testConnection();
-    console.log(`Server is running at http://127.0.0.1:${PORT}`);
-    console.log(`Environment: ${NODE_ENV}`);
-  } catch (error) {
-    console.error('error connecting to the database:', error);
-  }
+    try {
+        await testConnection();
+        console.log(`Server is running at http://127.0.0.1:${PORT}`);
+        console.log(`Environment: ${NODE_ENV}`);
+    } catch (error) {
+        console.error('error connecting to the database:', error);
+    }
 });
