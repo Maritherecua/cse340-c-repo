@@ -2,7 +2,7 @@
 import { body, validationResult } from 'express-validator';
 //import { getAllProjects } from '../models/projects.js';
 import { getProjectsByOrganizationId, getUpcomingProjects, getProjectDetails } from '../models/projects.js';
-import { getCategoriesByProjectId } from '../models/categories.js';
+import { getAllCategories, getCategoriesByProjectId, updateCategoryAssignments } from '../models/categories.js';
 import { createProject } from '../models/projects.js';
 import { getAllOrganizations } from '../models/organizations.js';
 // Define your validation rules array
@@ -86,7 +86,7 @@ const processNewProjectForm = async (req, res) => {
         req.flash('error', 'An error occurred while creating the project.');
         res.redirect('/new-project');
     }
-// Check for validation errors
+    // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         // Loop through validation errors and flash them
@@ -96,11 +96,62 @@ const processNewProjectForm = async (req, res) => {
 
         // Redirect back to the new project form
         return res.redirect('/new-project');
-    }    
+    }
+};
+
+const showAssignCategoriesForm = async (req, res) => {
+    try {
+        const projectId = req.params.projectId;
+        const projectDetails = await getProjectDetails(projectId);
+
+        if (!projectDetails) {
+            return res.status(404).render('assign-categories', {
+                title: 'Project Not Found',
+                projectId,
+                projectDetails: null,
+                categories: [],
+                assignedCategories: []
+            });
+        }
+
+        const categories = await getAllCategories();
+        const assignedCategories = await getCategoriesByProjectId(projectId);
+        const assignedCategoryIds = assignedCategories.map((category) => category.category_id);
+
+        res.render('assign-categories', {
+            title: 'Assign Categories to Project',
+            projectId,
+            projectDetails,
+            categories,
+            assignedCategories: assignedCategoryIds
+        });
+    } catch (error) {
+        console.error('Error loading assign categories form:', error);
+        res.status(500).send('An error occurred while loading the form.');
+    }
+};
+
+const processAssignCategoriesForm = async (req, res) => {
+    try {
+        const projectId = req.params.projectId;
+        const selectedCategoryIds = req.body.categoryIds || [];
+        const categoryIdsArray = Array.isArray(selectedCategoryIds)
+            ? selectedCategoryIds.map((id) => Number(id))
+            : [Number(selectedCategoryIds)];
+
+        await updateCategoryAssignments(projectId, categoryIdsArray);
+        req.flash('success', 'Categories updated successfully.');
+        res.redirect(`/project/${projectId}`);
+    } catch (error) {
+        console.error('Error updating categories:', error);
+        req.flash('error', 'An error occurred while updating categories.');
+        res.redirect(`/assign-categories/${req.params.projectId}`);
+    }
 };
 
 // Export the controller function for use in the routes
 export {
     showProjectsPage, showProjectDetailsPage,
-    showNewProjectForm, processNewProjectForm, projectValidation
+    showNewProjectForm, processNewProjectForm, projectValidation,
+    showAssignCategoriesForm, processAssignCategoriesForm
 };

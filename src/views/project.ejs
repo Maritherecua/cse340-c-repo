@@ -1,38 +1,49 @@
-
 <%- include('partials/header') %>
-<main class="project-details">
-    <% if (!project) { %>
-        <h1>Project Not Found</h1>
-        <p>Project details not available.</p>
-    <% } else { %>
-  <h1><%= project.title %></h1>
+    <main class="project-details">
+        <% if (!project) { %>
+            <h1>Project Not Found</h1>
+            <p>Project details not available.</p>
+            <% } else { %>
+                <h1>
+                    <%= project.title %>
+                </h1>
 
-<!-- Add Category Tags Section Here -->
-        <% if (categories && categories.length > 0) { %>
-            <div class="project-tags">
-                <strong>Categories:</strong>
-                <% categories.forEach(category => { %>
-                    <a href="/category/<%= category.category_id %>" class="tag">
-                        <%= category.name %>
-                    </a>
-                <% }) %>
-            </div>
-        <% } %>
-  <p><strong>Description:</strong> <%= project.description %></p>
+                <!-- Add Category Tags Section Here -->
+                <% if (categories && categories.length> 0) { %>
+                    <div class="project-tags">
+                        <strong>Categories:</strong>
+                        <% categories.forEach(category=> { %>
+                            <a href="/category/<%= category.category_id %>" class="tag">
+                                <%= category.name %>
+                            </a>
+                            <% }) %>
+                    </div>
+                    <% } %>
 
-  <p>
-    <strong>Date:</strong>
-    <%= project.date ? new Date(project.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "Date not available" %>
-  </p>
+                        <p>
+                            <a href="/assign-categories/<%= project.project_id %>">Assign Categories</a>
+                        </p>
 
-  <p><strong>Location:</strong> <%= project.location %></p>
+                        <p><strong>Description:</strong>
+                            <%= project.description %>
+                        </p>
 
-  <p>
-    <strong>Partner Organization:</strong>
-    <a href="/organization/<%= project.organization_id %>">
-      <%= project.organization_name %>
-      </a>
-  </p>
-    <% } %>
-</main>
-<%- include('partials/footer') %>
+                        <p>
+                            <strong>Date:</strong>
+                            <%= project.date ? new Date(project.date).toLocaleDateString('en-US', { month: 'short' ,
+                                day: 'numeric' , year: 'numeric' }) : "Date not available" %>
+                        </p>
+
+                        <p><strong>Location:</strong>
+                            <%= project.location %>
+                        </p>
+
+                        <p>
+                            <strong>Partner Organization:</strong>
+                            <a href="/organization/<%= project.organization_id %>">
+                                <%= project.organization_name %>
+                            </a>
+                        </p>
+                        <% } %>
+    </main>
+    <%- include('partials/footer') %>
