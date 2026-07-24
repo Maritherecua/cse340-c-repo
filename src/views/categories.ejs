@@ -3,13 +3,16 @@
         <h1>
             <%= title %>
         </h1>
+        <p><a href="/new-category">Add a new category</a></p>
         <ul>
             <% categories.forEach(category=> { %>
                 <li>
                     <!-- Wrap the category name in a link pointing to the details page -->
                     <a href="/category/<%= category.category_id %>">
-                    <%= category.name %>
+                        <%= category.name %>
                     </a>
+                    <span> - </span>
+                    <a href="/edit-category/<%= category.category_id %>">Edit</a>
                 </li>
                 <% }) %>
         </ul>
