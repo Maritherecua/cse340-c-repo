@@ -5,6 +5,7 @@ import { showOrganizationsPage } from './controllers/organizations.js';
 import { showProjectsPage } from './controllers/projects.js';
 import { showNewProjectForm } from './controllers/projects.js';
 import { processNewProjectForm } from './controllers/projects.js';
+import { showEditProjectForm, processEditProjectForm } from './controllers/projects.js';
 import { showCategoriesPage, showNewCategoryForm, showEditCategoryForm, processNewCategoryForm, processEditCategoryForm, categoryValidation } from './controllers/categories.js';
 import { showAssignCategoriesForm } from './controllers/projects.js';
 import { processAssignCategoriesForm } from './controllers/projects.js';
@@ -27,6 +28,8 @@ router.get('/projects', showProjectsPage);
 router.get('/new-project', showNewProjectForm);
 // Route to handle the form submission for creating a new project
 router.post('/new-project', projectValidation, processNewProjectForm);
+router.get('/edit-project/:id', showEditProjectForm);
+router.post('/edit-project/:id', projectValidation, processEditProjectForm);
 router.get('/categories', showCategoriesPage);
 router.get('/new-category', showNewCategoryForm);
 router.get('/edit-category/:id', showEditCategoryForm);

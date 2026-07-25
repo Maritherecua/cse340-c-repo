@@ -1,7 +1,7 @@
 //Import the necessary modules and functions
 import { body, validationResult } from 'express-validator';
 //import { getAllProjects } from '../models/projects.js';
-import { getProjectsByOrganizationId, getUpcomingProjects, getProjectDetails } from '../models/projects.js';
+import { getProjectsByOrganizationId, getUpcomingProjects, getProjectDetails, updateProject } from '../models/projects.js';
 import { getAllCategories, getCategoriesByProjectId, updateCategoryAssignments } from '../models/categories.js';
 import { createProject } from '../models/projects.js';
 import { getAllOrganizations } from '../models/organizations.js';
@@ -74,6 +74,16 @@ const showNewProjectForm = async (req, res) => {
 };
 //Function to extract the project data from the form using req.body.
 const processNewProjectForm = async (req, res) => {
+    // Check for validation errors before writing to the database.
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        errors.array().forEach((error) => {
+            req.flash('error', error.msg);
+        });
+
+        return res.redirect('/new-project');
+    }
+
     const { title, description, location, date, organizationId } = req.body;
     try {
         //Create the new project in the database using the createProject model function, passing in the extracted data. This function will return the ID of the newly created project.
@@ -86,16 +96,47 @@ const processNewProjectForm = async (req, res) => {
         req.flash('error', 'An error occurred while creating the project.');
         res.redirect('/new-project');
     }
-    // Check for validation errors
+};
+
+const showEditProjectForm = async (req, res) => {
+    try {
+        const projectId = req.params.id;
+        const project = await getProjectDetails(projectId);
+
+        if (!project) {
+            return res.status(404).render('project', { title: 'Project Not Found', project: null, categories: [] });
+        }
+
+        const organizations = await getAllOrganizations();
+        res.render('edit-project', { title: 'Edit Project', project, organizations });
+    } catch (error) {
+        console.error('Error loading edit project form:', error);
+        res.status(500).send('An error occurred while loading the form.');
+    }
+};
+
+const processEditProjectForm = async (req, res) => {
+    const projectId = req.params.id;
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
-        // Loop through validation errors and flash them
         errors.array().forEach((error) => {
             req.flash('error', error.msg);
         });
 
-        // Redirect back to the new project form
-        return res.redirect('/new-project');
+        return res.redirect(`/edit-project/${projectId}`);
+    }
+
+    const { title, description, location, date, organizationId } = req.body;
+
+    try {
+        await updateProject(projectId, title, description, location, date, organizationId);
+        req.flash('success', 'Project updated successfully!');
+        res.redirect(`/project/${projectId}`);
+    } catch (error) {
+        console.error('Error updating project:', error);
+        req.flash('error', 'An error occurred while updating the project.');
+        res.redirect(`/edit-project/${projectId}`);
     }
 };
 
@@ -153,5 +194,6 @@ const processAssignCategoriesForm = async (req, res) => {
 export {
     showProjectsPage, showProjectDetailsPage,
     showNewProjectForm, processNewProjectForm, projectValidation,
-    showAssignCategoriesForm, processAssignCategoriesForm
+    showAssignCategoriesForm, processAssignCategoriesForm,
+    showEditProjectForm, processEditProjectForm
 };
