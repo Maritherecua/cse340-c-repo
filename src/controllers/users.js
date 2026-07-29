@@ -1,29 +1,32 @@
 import bcrypt from 'bcrypt';
 import { createUser } from '../models/users.js';
 
+const extractRegistrationName = (body = {}) => {
+    if (body.name && body.name.trim()) return body.name.trim();
+    if (body.firstName && body.firstName.trim()) return body.firstName.trim();
+    if (body.username && body.username.trim()) return body.username.trim();
+    return 'User';
+};
+
 const showUserRegistrationForm = (req, res) => {
     res.render('register', { title: 'Register' });
 };
 
 const processUserRegistrationForm = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { email, password } = req.body;
+    const name = extractRegistrationName(req.body);
 
     try {
-        // Hash the password before storing it
-        const salt = await bcrypt.genSalt(10);
-        const passwordHash = await bcrypt.hash(password, salt);
+        const passwordHash = await bcrypt.hash(password, 10);
+        await createUser(name, email, passwordHash);
 
-        // Create the user in the database
-        const userId = await createUser(name, email, passwordHash);
-
-        // Redirect to the home page after successful registration
         req.flash('success', 'Registration successful! Please log in.');
-        res.redirect('/');
+        return res.redirect('/');
     } catch (error) {
-        console.error('Error registering user:', error);
+        console.error('Registration error:', error);
         req.flash('error', 'An error occurred during registration. Please try again.');
-        res.redirect('/register');
+        return res.redirect('/register');
     }
 };
 
-export { showUserRegistrationForm, processUserRegistrationForm };
+export { showUserRegistrationForm, processUserRegistrationForm, extractRegistrationName };

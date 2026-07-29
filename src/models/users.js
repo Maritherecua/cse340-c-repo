@@ -1,5 +1,5 @@
 import db from './db.js'
-const createuser = async (name, email, passwordHash) => {
+const createUser = async (name, email, passwordHash) => {
     const defaultRole = 'user'; // Set the default role to 'user'
     const query = `INSERT INTO users (name, email, password_hash, role_id) VALUES ($1, $2, $3, (SELECT role_id FROM roles WHERE role_name = $4))
     RETURNING user_id
