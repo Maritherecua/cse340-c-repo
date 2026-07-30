@@ -39,10 +39,12 @@ const processLoginForm = async (req, res) => {
     try {
         const user = await authenticateUser(email, password);
         if (user) {
+            req.session.user = user;
             req.session.userId = user.user_id ?? user.id;
             req.flash('success', 'Login successful!');
             console.log('User logged in:', user);
-            return res.redirect('/');
+            //Redirect to the dashboard after successful login
+            return res.redirect('/dashboard');
         }
         // If authentication fails, redirect back to the login page (function returns null)
         req.flash('error', 'Invalid email or password. Please try again.');
@@ -55,19 +57,17 @@ const processLoginForm = async (req, res) => {
     }
 };
 const requireLogin = (req, res, next) => {
-    if (!req.session || !req.session.user) {
+    if (!req.session || (!req.session.user && !req.session.userId)) {
         req.flash('error', 'You must be logged in to access that page.');
         return res.redirect('/login');
     }
     next();
 };
-
-module.exports = {
-    // ... other exports
-    requireLogin
-};
 const processLogout = async (req, res) => {
     // destroys the session, adds a success flash message (user logged out) and redirects to the login page
+    if (req.session.user) {
+        delete req.session.user;
+    }
     if (req.session.userId) {
         delete req.session.userId;
     }
@@ -78,7 +78,7 @@ const processLogout = async (req, res) => {
 };
 const showDashboard = (req, res) => {
     const user = req.session.user;
-    res.render('dashboard', { 
+    res.render('dashboard', {
         title: 'Dashboard',
         name: user.name,
         email: user.email
