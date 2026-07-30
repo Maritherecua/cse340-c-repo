@@ -20,6 +20,7 @@ import { processNewOrganizationForm } from './controllers/organizations.js';
 import { organizationValidation } from './controllers/organizations.js';
 import { processEditOrganizationForm } from './controllers/organizations.js';
 import { showUserRegistrationForm, processUserRegistrationForm } from './controllers/users.js';
+import { showLoginForm, processLoginForm, processLogout } from './controllers/users.js';
 const router = express.Router();
 
 router.get('/', showHomePage);
@@ -55,4 +56,7 @@ router.post('/edit-organization/:id', organizationValidation, processEditOrganiz
 // Routes for user registration
 router.get('/register', showUserRegistrationForm);
 router.post('/register', processUserRegistrationForm);
+router.get('/login', showLoginForm);
+router.post('/login', processLoginForm);
+router.get('/logout', processLogout);
 export default router;

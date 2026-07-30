@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import { createUser } from '../models/users.js';
+import { authenticateUser } from '../models/users.js';
 
 const extractRegistrationName = (body = {}) => {
     if (body.name && body.name.trim()) return body.name.trim();
@@ -28,5 +29,40 @@ const processUserRegistrationForm = async (req, res) => {
         return res.redirect('/register');
     }
 };
+const showLoginForm = (req, res) => {
+    res.render('login', { title: 'Login' });
+};
 
-export { showUserRegistrationForm, processUserRegistrationForm, extractRegistrationName };
+const processLoginForm = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await authenticateUser(email, password);
+        if (user) {
+            req.session.userId = user.id;
+            req.flash('success', 'Login successful!');
+            console.log('User logged in:', user);
+            return res.redirect('/');
+        }
+        // If authentication fails, redirect back to the login page (function returns null)
+        req.flash('error', 'Invalid email or password. Please try again.');
+        return res.redirect('/login');
+    } 
+    catch (error) {
+        console.error('Login error:', error);
+        req.flash('error', 'An error occurred during login. Please try again.');
+        return res.redirect('/login');
+    }
+};
+const processLogout = async (req, res) => {
+    // destroys the session, adds a success flash message (user logged out) and redirects to the login page
+    if (req.session.user) {
+        delete req.session.user;
+            }
+            req.flash('success', 'You have been logged out.');
+            res.redirect('/login');
+        
+};
+
+export { showUserRegistrationForm, processUserRegistrationForm, extractRegistrationName, 
+    processLoginForm, showLoginForm, processLogout};
