@@ -56,8 +56,12 @@ app.use((req, res, next) => {
 });
 // Middleware to make NODE_ENV available to all templates
 app.use((req, res, next) => {
+    res.locals.isLoggedIn = false; // Default to false
+    if (req.session && req.session.user) {
+        res.locals.isLoggedIn = true; // User is logged in
+    }
+
     res.locals.NODE_ENV = NODE_ENV;
-    res.locals.isLoggedIn = Boolean(req.session?.userId);
     next();
 });
 /**
