@@ -21,9 +21,13 @@ import { organizationValidation } from './controllers/organizations.js';
 import { processEditOrganizationForm } from './controllers/organizations.js';
 import { showUserRegistrationForm, processUserRegistrationForm } from './controllers/users.js';
 import { showLoginForm, processLoginForm, processLogout } from './controllers/users.js';
+import { requireLogin } from './controllers/users.js';
+import { showDashboard } from './controllers/users.js';
 const router = express.Router();
 
 router.get('/', showHomePage);
+// Protected dashboard route
+router.get('/dashboard', requireLogin, showDashboard);
 router.get('/organizations', showOrganizationsPage);
 router.get('/projects', showProjectsPage);
 // Routes for new project form and submission

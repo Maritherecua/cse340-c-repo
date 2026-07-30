@@ -54,6 +54,18 @@ const processLoginForm = async (req, res) => {
         return res.redirect('/login');
     }
 };
+const requireLogin = (req, res, next) => {
+    if (!req.session || !req.session.user) {
+        req.flash('error', 'You must be logged in to access that page.');
+        return res.redirect('/login');
+    }
+    next();
+};
+
+module.exports = {
+    // ... other exports
+    requireLogin
+};
 const processLogout = async (req, res) => {
     // destroys the session, adds a success flash message (user logged out) and redirects to the login page
     if (req.session.userId) {
@@ -64,8 +76,16 @@ const processLogout = async (req, res) => {
     return res.redirect('/login');
 
 };
+const showDashboard = (req, res) => {
+    const user = req.session.user;
+    res.render('dashboard', { 
+        title: 'Dashboard',
+        name: user.name,
+        email: user.email
+    });
+};
 
 export {
     showUserRegistrationForm, processUserRegistrationForm, extractRegistrationName,
-    processLoginForm, showLoginForm, processLogout
+    processLoginForm, showLoginForm, processLogout, requireLogin, showDashboard
 };
