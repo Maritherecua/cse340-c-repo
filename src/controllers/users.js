@@ -39,7 +39,7 @@ const processLoginForm = async (req, res) => {
     try {
         const user = await authenticateUser(email, password);
         if (user) {
-            req.session.userId = user.id;
+            req.session.userId = user.user_id ?? user.id;
             req.flash('success', 'Login successful!');
             console.log('User logged in:', user);
             return res.redirect('/');
@@ -47,7 +47,7 @@ const processLoginForm = async (req, res) => {
         // If authentication fails, redirect back to the login page (function returns null)
         req.flash('error', 'Invalid email or password. Please try again.');
         return res.redirect('/login');
-    } 
+    }
     catch (error) {
         console.error('Login error:', error);
         req.flash('error', 'An error occurred during login. Please try again.');
@@ -56,13 +56,16 @@ const processLoginForm = async (req, res) => {
 };
 const processLogout = async (req, res) => {
     // destroys the session, adds a success flash message (user logged out) and redirects to the login page
-    if (req.session.user) {
-        delete req.session.user;
-            }
-            req.flash('success', 'You have been logged out.');
-            res.redirect('/login');
-        
+    if (req.session.userId) {
+        delete req.session.userId;
+    }
+
+    req.flash('success', 'You have been logged out.');
+    return res.redirect('/login');
+
 };
 
-export { showUserRegistrationForm, processUserRegistrationForm, extractRegistrationName, 
-    processLoginForm, showLoginForm, processLogout};
+export {
+    showUserRegistrationForm, processUserRegistrationForm, extractRegistrationName,
+    processLoginForm, showLoginForm, processLogout
+};
