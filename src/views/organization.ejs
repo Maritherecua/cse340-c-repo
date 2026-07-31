@@ -10,7 +10,10 @@
 
         <p>Description: <%= organizationDetails.description %>
         </p>
+        <% if (user && user.is_admin) { %>
+            
         <p><a href="/edit-organization/<%= organizationDetails.organization_id %>">Edit Organization</a></p>
+        <% } %>
         <h3>Service Projects</h3>
         <ul>
             <% projects.forEach(project=> { %>

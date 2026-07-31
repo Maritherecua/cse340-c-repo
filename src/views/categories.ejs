@@ -3,7 +3,10 @@
         <h1>
             <%= title %>
         </h1>
+        
+        <% if (user && user.is_admin) { %>
         <p><a href="/new-category">Add a new category</a></p>
+        <% } %>
         <ul>
             <% categories.forEach(category=> { %>
                 <li>
@@ -12,7 +15,9 @@
                         <%= category.name %>
                     </a>
                     <span> - </span>
+                    <% if (user && user.is_admin) { %>
                     <a href="/edit-category/<%= category.category_id %>">Edit</a>
+                    <% } %>
                 </li>
                 <% }) %>
         </ul>
