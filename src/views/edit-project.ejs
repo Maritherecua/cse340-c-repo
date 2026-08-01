@@ -35,8 +35,7 @@
                     <% organizations.forEach((organization)=> { %>
                         <option value="<%= organization.organization_id %>"
                             <%=Number(project.organization_id)===Number(organization.organization_id) ? 'selected' : ''
-                            %>
-                            
+                            %>>
                             <%= organization.name %>
                         </option>
                         <% }) %>
