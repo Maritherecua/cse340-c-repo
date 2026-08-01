@@ -4,22 +4,25 @@
             <%= title %>
         </h1>
 
-        <% if (user && user.role_name === 'admin') { %>
+        <% if (user && user.role_name==='admin' ) { %>
             <a href="/new-category">Add a new category</a>
             <% } %>
-                <ul>
-                    <% categories.forEach(category=> { %>
-                        <li>
-                            <!-- Wrap the category name in a link pointing to the details page -->
-                            <a href="/category/<%= category.category_id %>"
-                                <%= category.name %>
-                            </a>
-                            <% if (user && user.role_name === 'admin') { %>
+                <% if (categories && categories.length> 0) { %>
+                    <ul>
+                        <% categories.forEach(category=> { %>
+                            <li>
+                                <a href="/category/<%= category.category_id %>">
+                                    <%= category.name %>
+                                </a>
                                 <span> - </span>
-                                <a href="/edit-category/<%= category.category_id %>">Edit</a>
-                                <% } %>
-                        </li>
-                        <% }) %>
-                </ul>
+                                <% if (user && user.role_name==='admin' ) { %>
+                                    <a href="/edit-category/<%= category.category_id %>">Edit category</a>
+                                    <% } %>
+                            </li>
+                            <% }) %>
+                    </ul>
+                    <% } else { %>
+                        <p>No categories found.</p>
+                        <% } %>
     </main>
     <%- include('partials/footer') %>
