@@ -10,9 +10,9 @@
 
         <p>Description: <%= organizationDetails.description %>
         </p>
-        <% if (user && user.is_admin) { %>
+        <% if (user && user.role_name === 'admin') { %>
             
-        <p><a href="/edit-organization/<%= organizationDetails.organization_id %>">Edit Organization</a></p>
+        <a href="/edit-organization/<%= organizationDetails.organization_id %>">Edit Organization</a>
         <% } %>
         <h3>Service Projects</h3>
         <ul>

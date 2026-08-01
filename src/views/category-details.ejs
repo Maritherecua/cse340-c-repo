@@ -4,21 +4,23 @@
       <%= category.name %>
     </h1>
 
-    <p><a href="/edit-category/<%= category.category_id %>">Edit Category</a></p>
+    <% if (user && user.role_name === 'admin') { %>
+      <a href="/edit-category/<%= category.category_id %>">Edit Category</a>
+      <% } %>
 
-    <h2>Service Projects in this Category:</h2>
-    <% if (projects && projects.length> 0) { %>
-      <ul>
-        <% projects.forEach(project=> { %>
-          <li>
-            <a href="/project/<%= project.project_id %>">
-              <%= project.title %>
-            </a>
-          </li>
-          <% }) %>
-      </ul>
-      <% } else { %>
-        <p>No projects found for this category.</p>
-        <% } %>
+        <h2>Service Projects in this Category:</h2>
+        <% if (projects && projects.length> 0) { %>
+          <ul>
+            <% projects.forEach(project=> { %>
+              <li>
+                <a href="/project/<%= project.project_id %>">
+                  <%= project.title %>
+                </a>
+              </li>
+              <% }) %>
+          </ul>
+          <% } else { %>
+            <p>No projects found for this category.</p>
+            <% } %>
   </main>
   <%- include('partials/footer') %>

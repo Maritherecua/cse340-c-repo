@@ -39,7 +39,7 @@ const showLoginForm = (req, res) => {
  * @param {string} role - The role name required (e.g., 'admin', 'user')
  * @returns {Function} Express middleware function
  */
-// Function factory to create middleware that checks for a specific role
+// Function factory to create middleware that checks for a specific role for route access
 const requireRole = (role) => {
     // The returned function is the actual middleware Express will execute later
     return (req, res, next) => {
@@ -70,6 +70,17 @@ const processLoginForm = async (req, res) => {
             req.session.userId = user.user_id ?? user.id;
             req.flash('success', 'Login successful!');
             console.log('User logged in:', user);
+
+            await new Promise((resolve, reject) => {
+                req.session.save((error) => {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+                    resolve();
+                });
+            });
+
             //Redirect to the dashboard after successful login
             return res.redirect('/dashboard');
         }
@@ -91,17 +102,18 @@ const requireLogin = (req, res, next) => {
     next();
 };
 const processLogout = async (req, res) => {
-    // destroys the session, adds a success flash message (user logged out) and redirects to the login page
-    if (req.session.user) {
-        delete req.session.user;
-    }
-    if (req.session.userId) {
-        delete req.session.userId;
-    }
+    await new Promise((resolve, reject) => {
+        req.session.destroy((error) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            resolve();
+        });
+    });
 
-    req.flash('success', 'You have been logged out.');
+    res.clearCookie('connect.sid');
     return res.redirect('/login');
-
 };
 const showDashboard = (req, res) => {
     const user = req.session.user;

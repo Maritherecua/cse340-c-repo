@@ -21,9 +21,9 @@
             <% if (!isLoggedIn) { %>
                 <li><a href="/register">Register</a></li>
                 <li><a href="/login">Login</a></li>
-            <% } else { %>
-                <li><a href="/logout">Logout</a></li>
-            <% } %>
+                <% } else { %>
+                    <li><a href="/logout">Logout</a></li>
+                    <% } %>
         </ul>
     </nav>
     <% const messages=typeof flash==='function' ? flash() : { success: [], error: [], warning: [], info: [] }; %>
