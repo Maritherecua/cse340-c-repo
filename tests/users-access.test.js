@@ -6,7 +6,8 @@ import { requireRole } from '../src/controllers/users.js';
 const viewOptions = {
     NODE_ENV: 'test',
     isLoggedIn: true,
-    flash: () => ({ success: [], error: [], warning: [], info: [] })
+    flash: () => ({ success: [], error: [], warning: [], info: [] }),
+    volunteeredProjects: []
 };
 
 test('header shows login and logout links based on authentication state', async () => {

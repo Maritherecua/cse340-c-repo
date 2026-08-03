@@ -21,34 +21,50 @@
                     <% } %>
 
 
-                    <p><a href="/assign-categories/<%= project.project_id %>">Assign Categories</a></p>
-                        
-                    <% if (user && user.role_name === 'admin') { %>
-                        
-                         <a href="/edit-project/<%= project.project_id %>">Edit Project</a>
-                        
-                        <% } %>
- 
-                        <p><strong>Description:</strong>
-                            <%= project.description %>
-                        </p>
+                        <p><a href="/assign-categories/<%= project.project_id %>">Assign Categories</a></p>
 
-                        <p>
-                            <strong>Date:</strong>
-                            <%= project.date ? new Date(project.date).toLocaleDateString('en-US', { month: 'short' ,
-                                day: 'numeric' , year: 'numeric' }) : "Date not available" %>
-                        </p>
+                        <% if (user && user.role_name==='admin' ) { %>
 
-                        <p><strong>Location:</strong>
-                            <%= project.location %>
-                        </p>
+                            <a href="/edit-project/<%= project.project_id %>">Edit Project</a>
 
-                        <p>
-                            <strong>Partner Organization:</strong>
-                            <a href="/organization/<%= project.organization_id %>">
-                                <%= project.organization_name %>
-                            </a>
-                        </p>
-                        <% } %>
+                            <% } %>
+
+                                <p><strong>Description:</strong>
+                                    <%= project.description %>
+                                </p>
+
+                                <p>
+                                    <strong>Date:</strong>
+                                    <%= project.date ? new Date(project.date).toLocaleDateString('en-US', {
+                                        month: 'short' , day: 'numeric' , year: 'numeric' }) : "Date not available" %>
+                                </p>
+
+                                <p><strong>Location:</strong>
+                                    <%= project.location %>
+                                </p>
+
+                                <p>
+                                    <strong>Partner Organization:</strong>
+                                    <a href="/organization/<%= project.organization_id %>">
+                                        <%= project.organization_name %>
+                                    </a>
+                                </p>
+
+                                <% if (isLoggedIn) { %>
+                                    <div class="volunteer-section">
+                                        <% if (isVolunteering) { %>
+                                            <p><strong>You are volunteering for this project.</strong></p>
+                                            <form action="/project/<%= project.project_id %>/unvolunteer" method="POST">
+                                                <button type="submit">Remove yourself as a volunteer</button>
+                                            </form>
+                                            <% } else { %>
+                                                <form action="/project/<%= project.project_id %>/volunteer"
+                                                    method="POST">
+                                                    <button type="submit">Volunteer for this project</button>
+                                                </form>
+                                                <% } %>
+                                    </div>
+                                    <% } %>
+                                        <% } %>
     </main>
     <%- include('partials/footer') %>

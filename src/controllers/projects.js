@@ -5,6 +5,7 @@ import { getProjectsByOrganizationId, getUpcomingProjects, getProjectDetails, up
 import { getAllCategories, getCategoriesByProjectId, updateCategoryAssignments } from '../models/categories.js';
 import { createProject } from '../models/projects.js';
 import { getAllOrganizations } from '../models/organizations.js';
+import { addVolunteer, removeVolunteer, isUserVolunteering } from '../models/volunteer.js';
 // Define your validation rules array
 const projectValidation = [
     body('title')
@@ -28,6 +29,12 @@ const projectValidation = [
 ];
 //Create the constant for the controller function to handle the request for the projects page. This function will call the getAllProjects function from the model to retrieve all projects from the database, and then render the 'projects' view, passing the title and the list of projects as data.
 const NUMBER_OF_UPCOMING_PROJECTS = 5;
+
+const getCurrentUserId = (req) => {
+    if (!req.session) return null;
+    return req.session.userId || req.session.user?.user_id || req.session.user?.id || null;
+};
+
 //Update the controller function TO USE THE getUpcomingProjects MODEL FUNCTION INSTEAD OF getAllProjects. THIS WILL RETRIEVE ONLY THE UPCOMING PROJECTS TO DISPLAY ON THE PROJECTS PAGE.
 const showProjectsPage = async (req, res) => {
     try {
@@ -45,6 +52,7 @@ const showProjectsPage = async (req, res) => {
 const showProjectDetailsPage = async (req, res) => {
     try {
         const Id = req.params.id; // Extracts the ID from the URL
+        const userId = getCurrentUserId(req);
         //Call the model function to get project details
         const project = await getProjectDetails(Id); // Call the model function to get project details
         if (!project) {
@@ -52,13 +60,54 @@ const showProjectDetailsPage = async (req, res) => {
         }
         // 2. Retrieve the categories for this project using your new model function
         const categories = await getCategoriesByProjectId(Id);
+        const volunteering = userId ? await isUserVolunteering(userId, Id) : false;
         //Render the view project.ejs with the project details. Pass the project title as the title for the view, and the project details as data to be displayed in the view. 
-        res.render('project', { title: project.title, project, categories }); // Render the view with project details and categories
+        res.render('project', { title: project.title, project, categories, isVolunteering: volunteering }); // Render the view with project details and categories
     }
 
     catch (error) {
         console.error('Error in showProjectDetailsPage:', error);
         res.status(500).send('An error occurred.');
+    }
+};
+
+const addProjectVolunteer = async (req, res) => {
+    const projectId = req.params.id;
+    const userId = getCurrentUserId(req);
+
+    if (!userId) {
+        req.flash('error', 'You must be logged in to volunteer for a project.');
+        return res.redirect('/login');
+    }
+
+    try {
+        await addVolunteer(userId, projectId);
+        req.flash('success', 'You are now volunteering for this project.');
+        return res.redirect(`/project/${projectId}`);
+    } catch (error) {
+        console.error('Error adding volunteer:', error);
+        req.flash('error', 'Unable to add your volunteer signup right now.');
+        return res.redirect(`/project/${projectId}`);
+    }
+};
+
+const removeProjectVolunteer = async (req, res) => {
+    const projectId = req.params.id;
+    const userId = getCurrentUserId(req);
+
+    if (!userId) {
+        req.flash('error', 'You must be logged in to remove volunteering.');
+        return res.redirect('/login');
+    }
+
+    try {
+        await removeVolunteer(userId, projectId);
+        req.flash('success', 'You are no longer volunteering for this project.');
+        return res.redirect(`/project/${projectId}`);
+    } catch (error) {
+        console.error('Error removing volunteer:', error);
+        req.flash('error', 'Unable to remove your volunteer signup right now.');
+        return res.redirect(`/project/${projectId}`);
     }
 };
 //Function to get a list of all organization from the db, and renders the new-project view, passing in the page title and the list of organizations to populate the dropsown menu.
@@ -195,5 +244,6 @@ export {
     showProjectsPage, showProjectDetailsPage,
     showNewProjectForm, processNewProjectForm, projectValidation,
     showAssignCategoriesForm, processAssignCategoriesForm,
-    showEditProjectForm, processEditProjectForm
+    showEditProjectForm, processEditProjectForm,
+    addProjectVolunteer, removeProjectVolunteer
 };

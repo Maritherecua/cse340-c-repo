@@ -9,6 +9,7 @@ import { showEditProjectForm, processEditProjectForm } from './controllers/proje
 import { showCategoriesPage, showNewCategoryForm, showEditCategoryForm, processNewCategoryForm, processEditCategoryForm, categoryValidation } from './controllers/categories.js';
 import { showAssignCategoriesForm } from './controllers/projects.js';
 import { processAssignCategoriesForm } from './controllers/projects.js';
+import { addProjectVolunteer, removeProjectVolunteer } from './controllers/projects.js';
 import { testErrorPage } from './controllers/errors.js';
 import { showOrganizationDetailsPage } from './controllers/organizations.js';
 import { showProjectDetailsPage } from './controllers/projects.js';
@@ -23,6 +24,7 @@ import { showUserRegistrationForm, processUserRegistrationForm } from './control
 import { showLoginForm, processLoginForm, processLogout } from './controllers/users.js';
 import { requireLogin } from './controllers/users.js';
 import { showDashboard } from './controllers/users.js';
+import { removeDashboardVolunteer } from './controllers/users.js';
 import { requireRole } from './controllers/users.js';
 import { getUsersList } from './controllers/users.js';
 const router = express.Router();
@@ -30,6 +32,7 @@ const router = express.Router();
 router.get('/', showHomePage);
 // Protected dashboard route
 router.get('/dashboard', requireLogin, showDashboard);
+router.post('/dashboard/unvolunteer/:id', requireLogin, removeDashboardVolunteer);
 router.get('/organizations', showOrganizationsPage);
 router.get('/projects', showProjectsPage);
 // Routes for new project form and submission
@@ -45,6 +48,8 @@ router.post('/new-category', requireRole('admin'), categoryValidation, processNe
 router.post('/edit-category/:id', requireRole('admin'), categoryValidation, processEditCategoryForm);
 router.get('/organization/:id', showOrganizationDetailsPage);
 router.get('/project/:id', showProjectDetailsPage);
+router.post('/project/:id/volunteer', requireLogin, addProjectVolunteer);
+router.post('/project/:id/unvolunteer', requireLogin, removeProjectVolunteer);
 router.get('/category/:id', showCategoryDetailsPage);
 // Routes to handle the assign categories to project form
 router.get('/assign-categories/:projectId', requireRole('admin'), showAssignCategoriesForm);

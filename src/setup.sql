@@ -108,17 +108,15 @@ INSERT INTO project_category (project_id, category_id) VALUES
 (15, 4) -- Charity Gala Support - Community Service
 ON CONFLICT (project_id, category_id) DO NOTHING;
 
-CREATE TABLE roles (
+CREATE TABLE IF NOT EXISTS roles (
     role_id SERIAL PRIMARY KEY,
     role_name VARCHAR(50) UNIQUE NOT NULL,
     role_description TEXT
 );
 INSERT INTO roles (role_name, role_description) VALUES 
     ('user', 'Standard user with basic access'),
-    ('admin', 'Administrator with full system access');
-
--- Verify the data was inserted
-SELECT * FROM roles;
+    ('admin', 'Administrator with full system access')
+ON CONFLICT (role_name) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS users (
     user_id SERIAL PRIMARY KEY,
@@ -135,7 +133,7 @@ CREATE TABLE IF NOT EXISTS project_volunteers (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, project_id),
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-  FOREIGN KEY (project_id) REFERENCES projects(project_id) ON DELETE CASCADE
+    FOREIGN KEY (project_id) REFERENCES project(project_id) ON DELETE CASCADE
 );
 
 

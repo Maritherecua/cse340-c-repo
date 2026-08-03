@@ -1,0 +1,37 @@
+<%- include('partials/header') %>
+  <main>
+    <h1>
+      <%= title %>
+    </h1>
+    <div class="project-details">
+      <h2>
+        <%= project.title %>
+      </h2>
+      <p><strong>Date:</strong>
+        <%= new Date(project.date).toLocaleDateString('en-US', { month: 'short' , day: 'numeric' , year: 'numeric' }) %>
+      </p>
+      <p><strong>Organization:</strong>
+        <a href="/organization/<%= project.organization_id %>">
+          <%= project.organization_name %>
+        </a>
+      </p>
+      <p><strong>Description:</strong>
+        <%= project.description %>
+      </p>
+    </div>
+    <div class="volunteer-section">
+      <% if (isLoggedIn) { %>
+        <% if (isVolunteering) { %>
+          <p class="volunteer-status">✓ You are volunteering for this project.</p>
+          <form action="/project/<%= project.project_id %>/unvolunteer" method="POST">
+            <button type="submit" class="btn btn-secondary">Remove Volunteering</button>
+          </form>
+          <% } else { %>
+            <form action="/project/<%= project.project_id %>/volunteer" method="POST">
+              <button type="submit" class="btn btn-primary">Volunteer for this Project</button>
+            </form>
+            <% } %>
+              <% } %>
+    </div>
+  </main>
+  <%- include('partials/footer') %>

@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import { createUser } from '../models/users.js';
 import { authenticateUser } from '../models/users.js';
 import { getAllUsers } from '../models/users.js';
+import { getVolunteeredProjectByUserId, removeVolunteer } from '../models/volunteer.js';
 
 const extractRegistrationName = (body = {}) => {
     if (body.name && body.name.trim()) return body.name.trim();
@@ -116,13 +117,52 @@ const processLogout = async (req, res) => {
     res.clearCookie('connect.sid');
     return res.redirect('/login');
 };
-const showDashboard = (req, res) => {
+const showDashboard = async (req, res) => {
+    const user = req.session.user || {};
+
+    try {
+        const userId = req.session.userId || user?.user_id || user?.id;
+        const volunteeredProjects = userId
+            ? await getVolunteeredProjectByUserId(userId)
+            : [];
+
+        res.render('dashboard', {
+            title: 'Dashboard',
+            name: user.name || 'User',
+            email: user.email || '',
+            volunteeredProjects
+        });
+    } catch (error) {
+        console.error('Error loading dashboard projects:', error);
+        req.flash('error', 'Unable to load your volunteered projects right now.');
+        res.render('dashboard', {
+            title: 'Dashboard',
+            name: user.name || 'User',
+            email: user.email || '',
+            volunteeredProjects: []
+        });
+    }
+};
+
+const removeDashboardVolunteer = async (req, res) => {
     const user = req.session.user;
-    res.render('dashboard', {
-        title: 'Dashboard',
-        name: user.name,
-        email: user.email
-    });
+    const userId = req.session.userId || user?.user_id || user?.id;
+    const projectId = req.params.id;
+
+    if (!userId) {
+        req.flash('error', 'You must be logged in to remove volunteering.');
+        return res.redirect('/login');
+    }
+
+    try {
+        await removeVolunteer(userId, projectId);
+        req.flash('success', 'You are no longer volunteering for this project.');
+        return res.redirect('/dashboard');
+    } catch (error) {
+        console.error('Error removing dashboard volunteer:', error);
+        req.flash('error', 'Unable to update your volunteer signup right now.');
+        return res.redirect('/dashboard');
+    }
 };
 
 const getUsersList = async (req, res) => {
@@ -136,5 +176,5 @@ const getUsersList = async (req, res) => {
 export {
     showUserRegistrationForm, processUserRegistrationForm, extractRegistrationName,
     processLoginForm, showLoginForm, processLogout, requireLogin, showDashboard, requireRole,
-    getUsersList
+    getUsersList, removeDashboardVolunteer
 };
